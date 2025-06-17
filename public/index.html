@@ -241,7 +241,26 @@
             font-weight: 600;
             margin-bottom: 10px;
         }
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        table, .card-table, .round-scores-table {
+            min-width: 600px;
+            width: 100%;
+            box-sizing: border-box;
+        }
         @media (max-width: 700px) {
+            .table-responsive {
+                margin-left: -2vw;
+                margin-right: -2vw;
+                padding-left: 2vw;
+                padding-right: 2vw;
+            }
+            table, .card-table, .round-scores-table {
+                min-width: 420px;
+            }
             .container { padding: 2vw 1vw; }
             table, th, td { font-size: 0.97rem; }
             input[type="text"] { width: 90px; font-size: 1rem; }
@@ -336,7 +355,7 @@ function startGame() {
 function renderScoreboard() {
     let html = `<h2>Round ${currentRound} of ${rounds}</h2>`;
     html += '<form id="roundForm">';
-    html += '<table class="card-table"><tr><th class="empty-header"></th>';
+    html += '<div class="table-responsive"><table class="card-table"><tr><th class="empty-header"></th>';
     for (let i = 0; i < numPlayers; i++) html += `<th class="player-header">${playerNames[i]}</th>`;
     html += '</tr>';
     html += '<tr><td>Bid</td>';
@@ -349,16 +368,16 @@ function renderScoreboard() {
         html += `<td><div class="plusminus"><button type="button" class="pm-btn" onclick="changeValue('trick',${i},-1)">-</button><span class="pm-value" id="trickVal${i}">0</span><button type="button" class="pm-btn" onclick="changeValue('trick',${i},1)">+</button></div></td>`;
     }
     html += '</tr>';
-    html += '</table>';
+    html += '</table></div>';
     html += '<button class="btn" type="submit">Submit Round</button>';
     html += '<button class="btn" type="button" style="margin-left:16px;background:#e11d48;" onclick="endGame()">End Game</button>';
     html += '</form>';
     html += '<h3>Scores</h3>';
-    html += '<table class="card-table"><tr><th class="empty-header"></th>';
+    html += '<div class="table-responsive"><table class="card-table"><tr><th class="empty-header"></th>';
     for (let i = 0; i < numPlayers; i++) html += `<th class="player-header">${playerNames[i]}</th>`;
     html += '</tr><tr><td>Total</td>';
     for (let i = 0; i < numPlayers; i++) html += `<td>${scores[i]}</td>`;
-    html += '</tr></table>';
+    html += '</tr></table></div>';
     html += renderRoundScoresTable();
     document.getElementById('scoreboard').innerHTML = html;
     // Set all values to 0 initially
@@ -372,7 +391,7 @@ function renderScoreboard() {
 function renderRoundScoresTable() {
     if (bids.length === 0) return '';
     let html = '<div class="round-scores-section"><h3>Per-Round Scores</h3>';
-    html += '<table class="round-scores-table"><tr><th class="empty-header">Round</th>';
+    html += '<div class="table-responsive"><table class="round-scores-table"><tr><th class="empty-header">Round</th>';
     for (let i = 0; i < numPlayers; i++) html += `<th class="player-header">${playerNames[i]}</th>`;
     html += '</tr>';
     let running = Array(numPlayers).fill(0);
@@ -393,7 +412,7 @@ function renderRoundScoresTable() {
     html += '<tr><th class="empty-header">Total</th>';
     for (let i = 0; i < numPlayers; i++) html += `<th class="player-header">${running[i]}</th>`;
     html += '</tr>';
-    html += '</table></div>';
+    html += '</table></div></div>';
     return html;
 }
 
