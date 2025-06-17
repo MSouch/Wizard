@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wizard Score Sheet</title>
+    <style>
+        body {
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(120deg, #232526 0%, #414345 100%);
+            margin: 0; padding: 0;
+        }
+        .container {
+            max-width: 950px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 22px;
+            box-shadow: 0 8px 40px #23252633;
+            padding: 44px 28px 36px 28px;
+        }
+        h1 {
+            text-align: center;
+            color: #232526;
+            font-size: 2.7rem;
+            letter-spacing: 2px;
+            font-weight: 800;
+        }
+        .setup, .scoreboard, .summary {
+            margin-top: 30px;
+        }
+        label {
+            margin-right: 10px;
+            font-weight: 500;
+        }
+        input[type="text"] {
+            border: 1.5px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 8px 14px;
+            font-size: 1.08rem;
+            margin-bottom: 10px;
+            width: 200px;
+            background: #f7f7fa;
+            transition: border 0.2s;
+        }
+        input[type="text"]:focus {
+            border: 1.5px solid #4f8cff;
+            outline: none;
+        }
+        .player-inputs > div {
+            margin-bottom: 10px;
+        }
+        .card-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 20px;
+            background: #f8fafc;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px #4f8cff22;
+        }
+        th, td {
+            border: none;
+            padding: 16px 8px;
+            text-align: center;
+            font-size: 1.13rem;
+        }
+        th {
+            background: linear-gradient(90deg, #4f8cff 0%, #38e7b0 100%);
+            color: #fff;
+            font-weight: 700;
+        }
+        th.player-header {
+            background: #232a36 !important;
+            color: #fff;
+            font-weight: 700;
+            border: none !important;
+        }
+        th.empty-header {
+            background: #232a36 !important;
+            color: #fff;
+            border: none !important;
+        }
+        .card-table th, .card-table td {
+            border: none !important;
+        }
+        tr:nth-child(even) {
+            background: #eaf1fb;
+        }
+        .btn {
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.13rem;
+            font-weight: 700;
+            margin-top: 22px;
+            box-shadow: 0 2px 8px #232a3622;
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            background: #1e40af;
+        }
+        .plusminus {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .pm-btn {
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            font-size: 1.4rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            box-shadow: 0 1px 4px #232a3622;
+        }
+        .pm-btn:active, .pm-btn:hover {
+            background: #1e40af;
+        }
+        .pm-value {
+            min-width: 32px;
+            font-size: 1.13rem;
+            font-weight: 600;
+        }
+        .winner {
+            font-weight: bold;
+            color: #38e7b0;
+            font-size: 1.3rem;
+            margin-top: 18px;
+        }
+        .round-scores-section {
+            margin-top: 36px;
+            background: #f7fafd;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px #4f8cff11;
+            padding: 18px 10px 10px 10px;
+        }
+        .round-scores-section h3 {
+            margin: 0 0 10px 0;
+            color: #4f8cff;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        .round-scores-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 0;
+            background: none;
+        }
+        .round-scores-table th, .round-scores-table td {
+            border: 1px solid #e0e0e0;
+            padding: 7px 4px;
+            font-size: 1.01rem;
+            background: #fff;
+        }
+        .round-scores-table th {
+            background: #eaf1fb;
+            color: #232526;
+            font-weight: 600;
+        }
+        .round-scores-table tr:last-child td {
+            font-weight: 700;
+            background: #f8fafc;
+        }
+        .podium {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 30px;
+            margin: 40px 0 30px 0;
+            height: 220px;
+        }
+        .podium-place {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            border-radius: 18px 18px 8px 8px;
+            background: #232a36;
+            color: #fff;
+            font-weight: 700;
+            box-shadow: 0 4px 18px #232a3622;
+            padding: 0 18px 0 18px;
+            position: relative;
+        }
+        .podium-rank {
+            font-size: 2.1rem;
+            font-weight: 900;
+            margin-bottom: 8px;
+            margin-top: -38px;
+            position: absolute;
+            top: -38px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            text-align: center;
+        }
+        .podium-1 .podium-rank {
+            color: #ffd700;
+            text-shadow: 0 2px 8px #ffd70055;
+        }
+        .podium-2 .podium-rank {
+            color: #bfc7d1;
+            text-shadow: 0 2px 8px #bfc7d155;
+        }
+        .podium-3 .podium-rank {
+            color: #cd7f32;
+            text-shadow: 0 2px 8px #cd7f3255;
+        }
+        .podium-1 {
+            height: 160px;
+            background: linear-gradient(180deg, #ffd700 0%, #f7c948 100%);
+            color: #232a36;
+            font-size: 1.25rem;
+        }
+        .podium-2 {
+            height: 110px;
+            background: linear-gradient(180deg, #bfc7d1 0%, #e0e5ec 100%);
+            color: #232a36;
+        }
+        .podium-3 {
+            height: 80px;
+            background: linear-gradient(180deg, #cd7f32 0%, #e6b98a 100%);
+            color: #232a36;
+        }
+        .podium-name {
+            font-size: 1.1rem;
+            margin-bottom: 6px;
+            text-align: center;
+            word-break: break-word;
+        }
+        .podium-score {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        @media (max-width: 700px) {
+            .container { padding: 6px; }
+            table, th, td { font-size: 0.97rem; }
+            input[type="text"] { width: 90px; }
+            .pm-btn { width: 28px; height: 28px; font-size: 1.1rem; }
+            .podium { gap: 10px; height: 120px; }
+            .podium-place { padding: 0 6px; }
+            .podium-1 { height: 80px; font-size: 1rem; }
+            .podium-2 { height: 60px; }
+            .podium-3 { height: 40px; }
+            .podium-rank { font-size: 1.1rem; margin-top: -20px; top: -20px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Wizard Score Sheet</h1>
+    <div class="setup" id="setup">
+        <label for="numPlayers">Number of Players:</label>
+        <select id="numPlayers">
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+        </select>
+        <div id="playerNames" class="player-inputs"></div>
+        <button class="btn" onclick="startGame()">Start Game</button>
+    </div>
+    <div class="scoreboard" id="scoreboard" style="display:none;"></div>
+    <div class="summary" id="summary" style="display:none;"></div>
+</div>
+<script>
+const roundsByPlayers = {3: 20, 4: 15, 5: 12, 6: 10};
+let numPlayers = 3;
+let playerNames = [];
+let rounds = 20;
+let currentRound = 1;
+let scores = [];
+let bids = [];
+let tricks = [];
+
+// Setup player name inputs
+document.getElementById('numPlayers').addEventListener('change', function() {
+    numPlayers = parseInt(this.value);
+    rounds = roundsByPlayers[numPlayers];
+    renderPlayerInputs();
+});
+
+function renderPlayerInputs() {
+    const container = document.getElementById('playerNames');
+    container.innerHTML = '';
+    for (let i = 0; i < numPlayers; i++) {
+        container.innerHTML += `<div><label>Player ${i+1} Name: <input type="text" id="pname${i}" value="Player ${i+1}" /></label></div>`;
+    }
+}
+renderPlayerInputs();
+
+function startGame() {
+    playerNames = [];
+    for (let i = 0; i < numPlayers; i++) {
+        let name = document.getElementById('pname'+i).value.trim() || `Player ${i+1}`;
+        playerNames.push(name);
+    }
+    scores = Array(numPlayers).fill(0);
+    bids = [];
+    tricks = [];
+    currentRound = 1;
+    document.getElementById('setup').style.display = 'none';
+    document.getElementById('scoreboard').style.display = '';
+    document.getElementById('summary').style.display = 'none';
+    renderScoreboard();
+}
+
+function renderScoreboard() {
+    let html = `<h2>Round ${currentRound} of ${rounds}</h2>`;
+    html += '<form id="roundForm">';
+    html += '<table class="card-table"><tr><th class="empty-header"></th>';
+    for (let i = 0; i < numPlayers; i++) html += `<th class="player-header">${playerNames[i]}</th>`;
+    html += '</tr>';
+    html += '<tr><td>Bid</td>';
+    for (let i = 0; i < numPlayers; i++) {
+        html += `<td><div class="plusminus"><button type="button" class="pm-btn" onclick="changeValue('bid',${i},-1)">-</button><span class="pm-value" id="bidVal${i}">0</span><button type="button" class="pm-btn" onclick="changeValue('bid',${i},1)">+</button></div></td>`;
+    }
+    html += '</tr>';
+    html += '<tr><td>Tricks</td>';
+    for (let i = 0; i < numPlayers; i++) {
+        html += `<td><div class="plusminus"><button type="button" class="pm-btn" onclick="changeValue('trick',${i},-1)">-</button><span class="pm-value" id="trickVal${i}">0</span><button type="button" class="pm-btn" onclick="changeValue('trick',${i},1)">+</button></div></td>`;
+    }
+    html += '</tr>';
+    html += '</table>';
+    html += '<button class="btn" type="submit">Submit Round</button>';
+    html += '<button class="btn" type="button" style="margin-left:16px;background:#e11d48;" onclick="endGame()">End Game</button>';
+    html += '</form>';
+    html += '<h3>Scores</h3>';
+    html += '<table class="card-table"><tr><th class="empty-header"></th>';
+    for (let i = 0; i < numPlayers; i++) html += `<th class="player-header">${playerNames[i]}</th>`;
+    html += '</tr><tr><td>Total</td>';
+    for (let i = 0; i < numPlayers; i++) html += `<td>${scores[i]}</td>`;
+    html += '</tr></table>';
+    html += renderRoundScoresTable();
+    document.getElementById('scoreboard').innerHTML = html;
+    // Set all values to 0 initially
+    for (let i = 0; i < numPlayers; i++) {
+        document.getElementById('bidVal'+i).textContent = 0;
+        document.getElementById('trickVal'+i).textContent = 0;
+    }
+    document.getElementById('roundForm').onsubmit = handleRoundSubmit;
+}
+
+function renderRoundScoresTable() {
+    if (bids.length === 0) return '';
+    let html = '<div class="round-scores-section"><h3>Per-Round Scores</h3>';
+    html += '<table class="round-scores-table"><tr><th class="empty-header">Round</th>';
+    for (let i = 0; i < numPlayers; i++) html += `<th class="player-header">${playerNames[i]}</th>`;
+    html += '</tr>';
+    let running = Array(numPlayers).fill(0);
+    for (let r = 0; r < bids.length; r++) {
+        html += `<tr><td>${r+1}</td>`;
+        for (let i = 0; i < numPlayers; i++) {
+            let score = 0;
+            if (bids[r][i] === tricks[r][i]) {
+                score = 20 + 10 * tricks[r][i];
+            } else {
+                score = -10 * Math.abs(bids[r][i] - tricks[r][i]);
+            }
+            running[i] += score;
+            html += `<td>${score > 0 ? '+' : ''}${score}</td>`;
+        }
+        html += '</tr>';
+    }
+    html += '<tr><th class="empty-header">Total</th>';
+    for (let i = 0; i < numPlayers; i++) html += `<th class="player-header">${running[i]}</th>`;
+    html += '</tr>';
+    html += '</table></div>';
+    return html;
+}
+
+function changeValue(type, idx, delta) {
+    const valId = (type === 'bid' ? 'bidVal' : 'trickVal') + idx;
+    let val = parseInt(document.getElementById(valId).textContent);
+    let max = currentRound;
+    let min = 0;
+    val = Math.max(min, Math.min(max, val + delta));
+    document.getElementById(valId).textContent = val;
+}
+
+function handleRoundSubmit(e) {
+    e.preventDefault();
+    let roundBids = [];
+    let roundTricks = [];
+    let totalTricks = 0;
+    for (let i = 0; i < numPlayers; i++) {
+        let bid = parseInt(document.getElementById('bidVal'+i).textContent);
+        let trick = parseInt(document.getElementById('trickVal'+i).textContent);
+        if (isNaN(bid) || isNaN(trick) || bid < 0 || trick < 0 || bid > currentRound || trick > currentRound) {
+            alert('Please enter valid numbers for all bids and tricks.');
+            return;
+        }
+        roundBids.push(bid);
+        roundTricks.push(trick);
+        totalTricks += trick;
+    }
+    if (totalTricks > currentRound) {
+        alert('The total number of tricks cannot exceed the number of cards dealt this round (' + currentRound + '). Please correct the entries.');
+        return;
+    }
+    bids.push(roundBids);
+    tricks.push(roundTricks);
+    // Calculate scores
+    for (let i = 0; i < numPlayers; i++) {
+        if (roundBids[i] === roundTricks[i]) {
+            scores[i] += 20 + 10 * roundTricks[i];
+        } else {
+            scores[i] -= 10 * Math.abs(roundBids[i] - roundTricks[i]);
+        }
+    }
+    if (currentRound < rounds) {
+        currentRound++;
+        renderScoreboard();
+    } else {
+        showSummary();
+    }
+}
+
+function endGame() {
+    showSummary();
+}
+
+function showSummary() {
+    document.getElementById('scoreboard').style.display = 'none';
+    let html = '<h2>Game Over</h2>';
+    // Podium design
+    let playerData = playerNames.map((name, i) => ({ name, score: scores[i] }));
+    playerData.sort((a, b) => b.score - a.score);
+    html += renderPodium(playerData);
+    html += '<table><tr><th>Player</th>';
+    for (let i = 0; i < numPlayers; i++) html += `<th>${playerNames[i]}</th>`;
+    html += '</tr><tr><td>Final Score</td>';
+    for (let i = 0; i < numPlayers; i++) html += `<td>${scores[i]}</td>`;
+    html += '</tr></table>';
+    let maxScore = Math.max(...scores);
+    let winners = playerNames.filter((_, i) => scores[i] === maxScore);
+    html += `<p class="winner">Winner${winners.length > 1 ? 's' : ''}: ${winners.join(', ')}</p>`;
+    html += '<button class="btn" onclick="location.reload()">New Game</button>';
+    document.getElementById('summary').innerHTML = html;
+    document.getElementById('summary').style.display = '';
+}
+
+function renderPodium(playerData) {
+    let podiumHtml = '<div class="podium">';
+    // 2nd place (left)
+    if (playerData[1]) {
+        podiumHtml += `<div class="podium-place podium-2"><div class="podium-rank">2</div><div class="podium-name">${playerData[1].name}</div><div class="podium-score">${playerData[1].score} pts</div></div>`;
+    } else {
+        podiumHtml += '<div class="podium-place podium-2"></div>';
+    }
+    // 1st place (center)
+    podiumHtml += `<div class="podium-place podium-1"><div class="podium-rank">1</div><div class="podium-name">${playerData[0].name}</div><div class="podium-score">${playerData[0].score} pts</div></div>`;
+    // 3rd place (right)
+    if (playerData[2]) {
+        podiumHtml += `<div class="podium-place podium-3"><div class="podium-rank">3</div><div class="podium-name">${playerData[2].name}</div><div class="podium-score">${playerData[2].score} pts</div></div>`;
+    } else {
+        podiumHtml += '<div class="podium-place podium-3"></div>';
+    }
+    podiumHtml += '</div>';
+    // List the rest (4th, 5th, 6th)
+    if (playerData.length > 3) {
+        podiumHtml += '<div style="text-align:center;margin-bottom:18px;">';
+        for (let i = 3; i < playerData.length; i++) {
+            podiumHtml += `<div style="margin:4px 0;font-weight:600;color:#232a36;">${i+1}. ${playerData[i].name} (${playerData[i].score} pts)</div>`;
+        }
+        podiumHtml += '</div>';
+    }
+    return podiumHtml;
+}
+</script>
+</body>
+</html>
